@@ -11,7 +11,6 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { Todo } from "./types/Todo";
-
 interface AddTodo {
   addTodo: Todo;
 }
@@ -27,14 +26,30 @@ const Todos = () => {
       }
     }
   `;
-  const [addTodo, { data, loading, error, reset }] = useMutation<AddTodo>(
-    ADD_TODO,
-    {
-      variables: {
-        type: todo
-      }
+
+  const [addTodo, { data, loading, error, reset }] = useMutation(ADD_TODO, {
+    variables: {
+      type: todo
+    },
+    update(cache, { data: { addTodo } }) {
+      cache.modify({
+        fields: {
+          todos(existingTodos = []) {
+            const newTodoRef = cache.writeFragment({
+              data: addTodo,
+              fragment: gql`
+                fragment newTodo on Todo {
+                  id
+                  type
+                }
+              `
+            });
+            return [...existingTodos, newTodoRef];
+          }
+        }
+      });
     }
-  );
+  });
 
   return (
     <Box>
