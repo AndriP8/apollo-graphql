@@ -1,6 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
-import { Select, Text } from "@chakra-ui/react";
+import { Box, Select, Text } from "@chakra-ui/react";
 import React from "react";
+import DogPhoto from "./DogPhoto";
 import SpinnerLoading from "./SpinnerLoading";
 import { Dog } from "./types/Dog";
 
@@ -8,11 +9,9 @@ interface GetDog {
   dogs: Pick<Dog, "id" | "breed">[];
 }
 
-interface DogsProps {
-  onDogSelect: (value: string) => void;
-}
+const Dogs = () => {
+  const [selectedDog, setSelectedDog] = React.useState("");
 
-const Dogs = (props: DogsProps) => {
   const GET_DOGS = gql`
     query GetDogs {
       dogs {
@@ -29,16 +28,19 @@ const Dogs = (props: DogsProps) => {
       {loading && <SpinnerLoading />}
       {error && <Text>{error.message}</Text>}
       {data && (
-        <Select
-          color="white"
-          onChange={(e) => props.onDogSelect(e.target.value)}
-        >
-          {data.dogs.map((dog) => (
-            <option key={dog.id} value={dog.breed} style={{ color: "black" }}>
-              {dog.breed}
-            </option>
-          ))}
-        </Select>
+        <Box>
+          <Select
+            color="white"
+            onChange={(e) => setSelectedDog(e.target.value)}
+          >
+            {data.dogs.map((dog) => (
+              <option key={dog.id} value={dog.breed} style={{ color: "black" }}>
+                {dog.breed}
+              </option>
+            ))}
+          </Select>
+          <DogPhoto breed={selectedDog} />
+        </Box>
       )}
     </>
   );
