@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useLazyQuery } from "@apollo/client";
 import { Box, Button, Image, Text } from "@chakra-ui/react";
 import { Dog } from "./types/Dog";
 
@@ -20,23 +20,20 @@ const DogPhoto = (props: DogPhotoProps) => {
     }
   `;
 
-  const { data, error, refetch } = useQuery<GetDogPhoto>(GET_DOG_PHOTO, {
-    variables: { breed: props.breed },
-    notifyOnNetworkStatusChange: true,
-    pollInterval: 1000
-  });
+  const [getDog, { data, error }] = useLazyQuery<GetDogPhoto>(GET_DOG_PHOTO);
 
   return (
     <>
       {error && <Text>{error.message}</Text>}
-      {data && (
-        <Box>
-          <Image src={data.dog.displayImage} width="80" height="80" />
-          <Button color="black" onClick={() => refetch({ breed: "bulldog" })}>
-            Refetch
-          </Button>
-        </Box>
-      )}
+      <Box>
+        {data && <Image src={data.dog.displayImage} width="80" height="80" />}
+        <Button
+          color="black"
+          onClick={() => getDog({ variables: { breed: "bulldog" } })}
+        >
+          Refetch
+        </Button>
+      </Box>
     </>
   );
 };
