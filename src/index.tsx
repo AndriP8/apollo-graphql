@@ -6,7 +6,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 
 const client = new ApolloClient({
-  uri: "https://71z1g.sse.codesandbox.io/",
+  uri: "https://sxewr.sse.codesandbox.io/",
   cache: new InMemoryCache(),
   connectToDevTools: true
 });
